@@ -21,20 +21,22 @@ class UserArticleController extends Controller
 {
     public function index(Request $request)
     {
+
         $articles = QueryBuilder::for(Article::owner())
-            // جستجوی عنوان با استفاده از regex و نادیده گرفتن در صورت خالی بودن
-            ->when($request->filled('title'), function ($query) use ($request) {
-                $title = $request->input('title');
-                $query->where('title', 'REGEXP', "[[:<:]]" . $title . "[[:>:]]");
-            })
-            // فیلتر بر اساس دسته‌بندی‌ها با OR
-            ->when($request->filled('categories'), function ($query) use ($request) {
-                $categoryIds = $request->input('categories');
-                $query->whereHas('categories', function ($q) use ($categoryIds) {
-                    $q->whereIn('categories.id', $categoryIds);
-                });
-            })
-            ->get();
+        // جستجوی عنوان با استفاده از regex و نادیده گرفتن در صورت خالی بودن
+        ->when($request->filled('title'), function ($query) use ($request) {
+            $title = $request->input('title');
+            $query->where('title', 'REGEXP', "[[:<:]]" . $title . "[[:>:]]");
+        })
+        // فیلتر بر اساس دسته‌بندی‌ها با OR
+        ->when($request->filled('categories'), function ($query) use ($request) {
+            $categoryIds = $request->input('categories');
+            $query->whereHas('categories', function ($q) use ($categoryIds) {
+                $q->whereIn('categories.id', $categoryIds);
+            });
+        })
+        ->get();
+        return response()->json($articles, 200);
 //        $tickets = QueryBuilder::for(Ticket::class)
 //            ->allowedFilters(['is_locked'])
 //            ->defaultSort('created_at')
@@ -66,12 +68,12 @@ class UserArticleController extends Controller
 
         $imgPath = $file_img->upload($validated['img'], 'images/article-images');
 
-        $contentPath = $file_content->upload($validated['content'], 'article-contents');
+        // $contentPath = $file_content->upload($validated['content'], 'article-contents');
 
         $article = Auth::user()->articles()->create([
             'title' => $validated['title'],
             'img' => $imgPath,
-            'content' => $contentPath,
+            'content' =>$validated['content'],
             'creator_name' => Auth::user()->name,
             ]);
 

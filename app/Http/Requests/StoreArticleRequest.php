@@ -23,7 +23,7 @@ class StoreArticleRequest extends FormRequest
     {
         return [
             'title' => 'required|max:255|unique:articles,title', // عنوان یونیک و حداکثر ۲۵۵ کاراکتر
-            'content' => 'required|file|mimes:html|max:5120', // محتوای ارسال‌شده به‌صورت فایل (محدود به فرمت‌های خاص و اندازه)
+            'content' => 'required', // محتوای ارسال‌شده به‌صورت فایل (محدود به فرمت‌های خاص و اندازه)
             'categories' => 'nullable|array', // آرایه‌ای از دسته‌بندی‌ها
             'categories.*' => 'exists:categories,id', // بررسی اینکه هر دسته‌بندی در جدول categories موجود باشد
             'img' => 'required|image|mimes:jpeg,png,jpg|max:2048', // تصویر اجباری با فرمت و حجم مشخص
